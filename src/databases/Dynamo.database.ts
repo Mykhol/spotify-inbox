@@ -1,8 +1,8 @@
 import Database from "@/databases/Database";
-import {DynamoDBDocumentClient, PutCommand, PutCommandInput, ScanCommand} from "@aws-sdk/lib-dynamodb"
+import {DeleteCommand, DynamoDBDocumentClient, PutCommand, PutCommandInput, ScanCommand} from "@aws-sdk/lib-dynamodb"
 import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
 
-class Dynamo<T> implements Database<T> {
+class Dynamo<T extends Record<string, any>> implements Database<T> {
 
   protected dynamoClient: DynamoDBClient;
   protected documentClient: DynamoDBDocumentClient;
@@ -27,14 +27,10 @@ class Dynamo<T> implements Database<T> {
   }
 
   async addOne(item: T) {
-    const params = {
+    await this.documentClient.send(new PutCommand({
       TableName: this.tableName,
       Item: item,
-    } as PutCommandInput;
-
-    const data = await this.documentClient.send(new PutCommand(params));
-
-    return item;
+    }));
   }
 
   remove(item: T) {
@@ -42,36 +38,33 @@ class Dynamo<T> implements Database<T> {
 
   async addMany(items: T[]) {
     items.map(async (item) => {
-      const params = {
+      await this.documentClient.send(new PutCommand({
         TableName: this.tableName,
         Item: item,
-      } as PutCommandInput;
-
-      const data = await this.documentClient.send(new PutCommand(params));
+      }));
     })
-
-    return items;
   }
 
   async getAll() {
-    const params = {
+    await this.documentClient.send(new ScanCommand({
       TableName: this.tableName,
-    };
-    const data = await this.documentClient.send(new ScanCommand(params));
-    if (data.$metadata.httpStatusCode === 200) {
-      return data.Items as T[];
-    }
-
-    return data.Items as T[];
+    }));
   }
 
-  removeAll() {
+  async removeAll() {
+
   }
 
-  removeMany(items: T[]) {
+  async removeMany(items: T[]) {
   }
 
-  removeOne(item: T) {
+  async removeOne(item: T) {
+    await this.documentClient.send(new DeleteCommand({
+      TableName: this.tableName,
+      Key: {
+        id: item.id
+      }
+    }))
   }
 
 }
