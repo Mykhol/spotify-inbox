@@ -33,9 +33,6 @@ class Dynamo<T extends Record<string, any>> implements Database<T> {
     }));
   }
 
-  remove(item: T) {
-  }
-
   async addMany(items: T[]) {
     items.map(async (item) => {
       await this.documentClient.send(new PutCommand({
@@ -66,7 +63,6 @@ class Dynamo<T extends Record<string, any>> implements Database<T> {
       }
     }))
   }
-
 }
 
 export default Dynamo;
