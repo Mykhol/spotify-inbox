@@ -48,11 +48,15 @@ class Dynamo<T extends Record<string, any>> implements Database<T> {
     }));
   }
 
-  async removeAll() {
-
-  }
-
   async removeMany(items: T[]) {
+    items.map(async (item) => {
+      await this.documentClient.send(new DeleteCommand({
+        TableName: this.tableName,
+        Key: {
+          id: item.id
+        }
+      }))
+    })
   }
 
   async removeOne(item: T) {
