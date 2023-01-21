@@ -40,7 +40,17 @@ class Dynamo<T> implements Database<T> {
   remove(item: T) {
   }
 
-  addMany(items: T[]) {
+  async addMany(items: T[]) {
+    items.map(async (item) => {
+      const params = {
+        TableName: this.tableName,
+        Item: item,
+      } as PutCommandInput;
+
+      const data = await this.documentClient.send(new PutCommand(params));
+    })
+
+    return items;
   }
 
   async getAll() {
