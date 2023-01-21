@@ -1,14 +1,14 @@
 import Database from "@/databases/Database";
 
-abstract class Repository<T> {
+class Repository<T> {
 
   constructor(
     private database: Database<T>
   ) {
   }
 
-  add(item: T) {
-    this.database.add(item)
+  async addOne(item: T) {
+    await this.database.addOne(item)
   }
 }
 

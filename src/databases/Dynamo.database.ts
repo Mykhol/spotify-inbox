@@ -26,24 +26,21 @@ class Dynamo<T> implements Database<T> {
     this.documentClient = DynamoDBDocumentClient.from(this.dynamoClient);
   }
 
-  async add(item: T) {
+  async addOne(item: T) {
     const params = {
       TableName: this.tableName,
       Item: item,
     } as PutCommandInput;
 
-    return await this.documentClient.send(new PutCommand(params));
+    const data = await this.documentClient.send(new PutCommand(params));
+
+    return item;
   }
 
   remove(item: T) {
-
   }
 
   addMany(items: T[]) {
-    return [];
-  }
-
-  addOne(item: T) {
   }
 
   async getAll() {
@@ -55,7 +52,7 @@ class Dynamo<T> implements Database<T> {
       return data.Items as T[];
     }
 
-    return null;
+    return data.Items as T[];
   }
 
   removeAll() {
