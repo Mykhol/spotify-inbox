@@ -1,9 +1,16 @@
-
 abstract class Database<T> {
 
-  abstract add(item: T): T
+  abstract getAll(): void
 
-  abstract remove(item: T): T
+  abstract removeAll(): void
+
+  abstract addOne(item: T): void
+
+  abstract addMany(items: T[]): void
+
+  abstract removeOne(item: T): void
+
+  abstract removeMany(items: T[]): void
 
 }
 
