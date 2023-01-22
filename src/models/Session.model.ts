@@ -1,5 +1,14 @@
+import DatabaseObject from "@/models/DatabaseObject.model";
 
-class Session {
+class Session extends DatabaseObject {
+
+  constructor(
+    public sessionToken: string,
+    public userId: string,
+    public expires?: number,
+  ) {
+    super();
+  }
 
 }
 

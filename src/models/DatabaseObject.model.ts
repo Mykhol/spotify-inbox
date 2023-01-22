@@ -2,7 +2,7 @@ import {OptionalUnlessRequiredId} from "mongodb";
 
 class DatabaseObject {
 
-  constructor(public _id: string) {
+  constructor(public _id?: string) {
 
   }
 

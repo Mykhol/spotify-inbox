@@ -1,8 +1,13 @@
 import DatabaseObject from "@/models/DatabaseObject.model";
 
-class User implements DatabaseObject {
-  constructor(public _id: string, public email: string) {
-
+class User extends DatabaseObject {
+  constructor(
+    public name: string,
+    public email: string,
+    public emailVerified?: number,
+    public image?: string,
+  ) {
+super();
   }
 }
 
