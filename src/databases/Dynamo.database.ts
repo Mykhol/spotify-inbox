@@ -1,8 +1,10 @@
 import Database from "@/databases/Database";
-import {DeleteCommand, DynamoDBDocumentClient, PutCommand, PutCommandInput, ScanCommand} from "@aws-sdk/lib-dynamodb"
-import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
+import {DynamoDBDocumentClient, GetCommand, PutCommand} from "@aws-sdk/lib-dynamodb"
+import {DeleteItemCommand, DynamoDBClient, GetItemCommand} from "@aws-sdk/client-dynamodb";
+import DatabaseObject from "@/models/DatabaseObject.model";
+import Query from "@/databases/Query";
 
-class Dynamo<T extends Record<string, any>> implements Database<T> {
+class Dynamo<T extends DatabaseObject> implements Database<T> {
 
   protected dynamoClient: DynamoDBClient;
   protected documentClient: DynamoDBDocumentClient;
@@ -26,46 +28,41 @@ class Dynamo<T extends Record<string, any>> implements Database<T> {
     this.documentClient = DynamoDBDocumentClient.from(this.dynamoClient);
   }
 
-  async addOne(item: T) {
-    await this.documentClient.send(new PutCommand({
-      TableName: this.tableName,
-      Item: item,
-    }));
-  }
-
-  async addMany(items: T[]) {
-    items.map(async (item) => {
+  async add(item: T): Promise<T> {
       await this.documentClient.send(new PutCommand({
         TableName: this.tableName,
         Item: item,
       }));
-    })
+
+      return item;
   }
 
-  async getAll() {
-    await this.documentClient.send(new ScanCommand({
+  async get(query: Query<T>): Promise<T | null> {
+
+    let key = {};
+    key = {...key, [query.property.toString()]: query.value};
+
+    console.log(key)
+
+    const value = await this.documentClient.send(new GetCommand({
       TableName: this.tableName,
-    }));
-  }
-
-  async removeMany(items: T[]) {
-    items.map(async (item) => {
-      await this.documentClient.send(new DeleteCommand({
-        TableName: this.tableName,
-        Key: {
-          id: item.id
-        }
-      }))
-    })
-  }
-
-  async removeOne(item: T) {
-    await this.documentClient.send(new DeleteCommand({
-      TableName: this.tableName,
-      Key: {
-        id: item.id
-      }
+      Key: key
     }))
+
+    return value.Item as T || null;
+  }
+
+  async remove(query: Query<T>): Promise<void | T> {
+
+    let key = {};
+    key = {...key, [query.property.toString()]: {N: query.value}};
+
+    await this.documentClient.send(new DeleteItemCommand({
+      TableName: this.tableName,
+      Key: key
+    }))
+
+    return
   }
 }
 

@@ -1,10 +1,7 @@
-"use client";
-
 import LogInButton from "@/ui/auth/LogInButton";
 import Page from "@/ui/page/Page";
 
-const AppPage = () => {
-
+const AppPage = async () => {
   return (
     <Page>
       <div className="h-screen flex flex-col justify-center items-center">
