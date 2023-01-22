@@ -1,10 +1,11 @@
+import Query from "@/databases/Query";
+
 abstract class Database<T> {
 
-  abstract getAll(): Promise<T[] | void>
-  abstract addOne(item: T): Promise<T | void>
-  abstract removeOne(item: T): Promise<T | void>
-  abstract addMany(items: T[]): Promise<T[] | void>
-  abstract removeMany(items: T[]): Promise<T[] | void>
+  abstract get(query: Query<T>): Promise<T | null>
+  abstract add(item: T): Promise<T>
+  abstract remove(query: Query<T>): Promise<void>
+  abstract update(item: T): Promise<T | null>
 
 }
 
