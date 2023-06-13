@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.254.0",
+    "@aws-sdk/client-dynamodb": "^3.351.0",
     "@aws-sdk/lib-dynamodb": "^3.254.0",
     "@next/font": "13.1.4",
     "@types/node": "18.11.18",
